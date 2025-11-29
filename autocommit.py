@@ -39,7 +39,14 @@ def verificar_variaveis_ambiente():
 
 def verificar_repositorio():
     """Verifica se o diretório atual é um repositório Git"""
-    current_dir = os.getcwd()
+    try:
+        #refeito para deteectar o diretório se é repositório ou nao
+        git_dir = subprocess.run(['git', 'rev-parse', '--show-toplevel'], stdout=subprocess.PIPE, text=True, check=True) #tenta pegar diretorio do repositorio git atual
+        current_dir=git_dir.stdout.strip() #remove quebra de linha
+        
+    except:
+        current_dir = os.getcwd() #se nao achar pega o normal
+
     print(f"📂 Diretório atual: {current_dir}")
 
     if not os.path.exists(os.path.join(current_dir, ".git")):
@@ -78,12 +85,11 @@ def obter_alteracoes():
             
             # Usa diff --no-index para mostrar todo o conteúdo como novo
             diff = subprocess.run(["git", "diff", "--no-index", "/dev/null", "."],
-                                capture_output=True, text=True, stderr=subprocess.DEVNULL).stdout.strip()
-            return diff
+                                stdout=subprocess.PIPE, encoding='utf-8', text=True, stderr=subprocess.DEVNULL).stdout.strip()
         
         # Se for um repositório git, verifica alterações
         status = subprocess.run(["git", "status", "--porcelain"], 
-                              capture_output=True, text=True).stdout.strip()
+                              capture_output=True, encoding='utf-8', text=True).stdout.strip()
         
         if not status:
             print("ℹ️ Nenhuma alteração detectada para commit.")
@@ -97,13 +103,13 @@ def obter_alteracoes():
             # Adiciona arquivos não rastreados ao index temporariamente
             subprocess.run(["git", "add", "-N", "."], check=True)
             diff = subprocess.run(["git", "diff"], 
-                                capture_output=True, text=True).stdout.strip()
+                                capture_output=True, encoding='utf-8', text=True).stdout.strip()
             # Reseta o index
             subprocess.run(["git", "reset"], check=True)
         else:
             # Caso contrário, usa diff normal
             diff = subprocess.run(["git", "diff"], 
-                                capture_output=True, text=True).stdout.strip()
+                                capture_output=True, encoding='utf-8', text=True).stdout.strip()
         
         if not diff:
             print("ℹ️ Nenhuma diferença detectada para gerar o descritivo.")
@@ -119,9 +125,9 @@ def gerar_mensagem_commit(diff_text):
     """Gera uma mensagem de commit usando a API do Gemini"""
     # Lista de modelos para tentar em ordem
     modelos = [
-        'gemini-2.5-flash',  # Modelo mais recente (funcionando)
-        'gemini-1.5-flash',  # Versão estável
-        'gemini-1.5-pro',  # Versão pro
+        'gemini-2.5-flash',  # Modelo agradável
+        'gemini-2.5-flash-lite',  # Versão mais rápida em resposta
+        'gemini-2.5-pro'  # Versão pro
     ]
     
     prompt = (
