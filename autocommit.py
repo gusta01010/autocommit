@@ -38,7 +38,7 @@ def verificar_variaveis_ambiente():
         return False
     return True
 
-def verificar_repositorio():
+def verificar_repositorio(file_path):
     """Verifica se o diretório atual é um repositório Git"""
     try:
         #refeito para deteectar o diretório se é repositório ou nao
