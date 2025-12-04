@@ -4,7 +4,7 @@ import argparse
 import subprocess
 import requests
 from dotenv import load_dotenv
-
+import json
 
 
 # Carrega as variáveis de ambiente do arquivo .env
@@ -121,6 +121,18 @@ def obter_alteracoes():
         print(f"❌ Erro ao obter alterações: {e}")
         return None
 
+# configura o prompt a partir do JSON
+def get_prompt(diff_text):
+    prompt_path = os.path.join(os.path.dirname(__file__), 'prompt.json')
+    with open(prompt_path, 'r', encoding='utf-8') as data:
+        prompt = json.load(data)
+        
+        # filtro para substituir palavras
+        prompt_text = prompt["prompt"].replace('{getIdioma}', getIdioma()).replace('{diff_text}', diff_text)
+    
+    return prompt_text
+        
+
 def gerar_mensagem_commit(diff_text):
     """Gera uma mensagem de commit usando a API do Gemini"""
     # Lista de modelos para tentar em ordem
@@ -129,13 +141,8 @@ def gerar_mensagem_commit(diff_text):
         'gemini-2.5-flash-lite',  # Versão mais rápida em resposta
         'gemini-2.5-pro'  # Versão pro
     ]
-    
-    prompt = (
-        f"Faça em {getIdioma()}, gere uma mensagem de commit detalhada " #retorna idioma recebido no parâmetro
-        "com base nas seguintes diferenças entre os arquivos. "
-        "Sua primeira linha na resposta deve ser o título:\n"
-        f"{diff_text}"
-    )
+
+    prompt = get_prompt(diff_text)
     
     print("🔄 Tentando gerar mensagem com API do Gemini...")
     

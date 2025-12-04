@@ -11,7 +11,7 @@ A inspiração veio da necessidade diária de manter um histórico de alteraçõ
 
 ### 🎥 Demonstração
 
-<img src="https://raw.githubusercontent.com/glira/autocommit/main/example.gif" alt="Demonstração do AutoCommit" width="1280">
+<img src="https://raw.githubusercontent.com/gusta01010/autocommit/main/example.gif" alt="Demonstração do AutoCommit" width="1280">
 
 ### 🤖 Tecnologia
 
@@ -42,7 +42,7 @@ O AutoCommit utiliza o Google Gemini, um poderoso modelo de linguagem da Google,
 
 1. Clone o repositório:
 ```bash
-git clone https://github.com/glira/autocommit.git
+git clone https://github.com/gusta01010/autocommit.git
 cd autocommit
 ```
 
@@ -80,7 +80,7 @@ alias autocommit="python /caminho/para/seu/autocommit.py"
 
 Por exemplo:
 ```bash
-alias autocommit="python /home/glira/projetos/autocommit/autocommit.py"
+alias autocommit="python /home/usuario/projetos/autocommit/autocommit.py"
 ```
 
 Após adicionar o alias, recarregue seu arquivo de configuração:
@@ -121,7 +121,7 @@ Contribuições são sempre bem-vindas! Sinta-se à vontade para:
 5. Abrir um Pull Request
 
 Aceito sugestões de melhorias! Se você tem uma ideia para tornar este projeto melhor, não hesite em:
-- Abrir uma [Issue](https://github.com/glira/autocommit/issues)
+- Abrir uma [Issue](https://github.com/gusta01010/autocommit/issues)
 - Enviar um Pull Request
 - Entrar em contato diretamente comigo
 
@@ -139,7 +139,7 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 ## 📬 Contato
 
 
-Link do Projeto: [https://github.com/glira/autocommit](https://github.com/glira/autocommit)
+Link do Projeto: [https://github.com/gusta01010/autocommit](https://github.com/gusta01010/autocommit)
 
 ---
 

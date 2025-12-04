@@ -1,0 +1,3 @@
+{
+    "prompt": "Faça em {getIdioma}, gere uma mensagem de commit detalhada\ncom base nas seguintes diferenças entre os arquivos.\nSua primeira linha na resposta deve ser o título:\n{diff_text}"
+}
