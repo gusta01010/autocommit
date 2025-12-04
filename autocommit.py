@@ -127,11 +127,10 @@ def get_prompt(diff_text):
     with open(prompt_path, 'r', encoding='utf-8') as data:
         prompt = json.load(data)
         
-        #filtro para substituir palavras
-        prompt["prompt"] = prompt["prompt"].replace('{getIdioma}',getIdioma())
-        prompt["prompt"] = prompt["prompt"].replace('{diff_text}',diff_text)
+        # filtro para substituir palavras
+        prompt_text = prompt["prompt"].replace('{getIdioma}', getIdioma()).replace('{diff_text}', diff_text)
     
-    return prompt["prompt"]
+    return prompt_text
         
 
 def gerar_mensagem_commit(diff_text):
