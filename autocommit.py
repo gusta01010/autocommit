@@ -6,7 +6,7 @@ import requests
 from dotenv import load_dotenv
 import json
 
-
+#teste
 # Carrega as variáveis de ambiente do arquivo .env
 load_dotenv()
 
@@ -18,6 +18,7 @@ GIT_USER_EMAIL = os.getenv('GIT_USER_EMAIL')
 # Configura o recebimento de argumentos
 argumentos = argparse.ArgumentParser(description ='Recebe idioma')
 argumentos.add_argument("-i", "-l", "--idioma", "--language", type=str, help="Idioma a ser traduzido", default="Português")
+argumentos.add_argument("arquivo", type=str, help="Arquivo a ser comitado", nargs="*", default=".") #nargs: 0 ou n arquivos
 args = argumentos.parse_args()
 
 def verificar_variaveis_ambiente():
