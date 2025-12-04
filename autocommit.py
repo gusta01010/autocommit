@@ -253,7 +253,7 @@ def main():
                 return
 
             # Verifica o repositório Git
-            if not verificar_repositorio(file_path):
+            if not verificar_repositorio(file):
                 return
 
             # Obtém alterações
