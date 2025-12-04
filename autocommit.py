@@ -123,7 +123,8 @@ def obter_alteracoes():
 
 # configura o prompt a partir do JSON
 def setPrompt(diff_text):
-    with open('./prompt.json', 'r', encoding='utf-8') as data:
+    prompt_path = os.path.join(os.path.dirname(__file__), 'prompt.json')
+    with open(prompt_path, 'r', encoding='utf-8') as data:
         prompt = json.load(data)
         
         #filtro para substituir palavras
