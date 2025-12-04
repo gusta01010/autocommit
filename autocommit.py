@@ -39,10 +39,10 @@ def verificar_variaveis_ambiente():
     return True
 
 def verificar_repositorio(file_path):
-    """Verifica se o diretório atual é um repositório Git"""
+    """Verifica se o diretório é um repositório Git"""
     try:
         #refeito para deteectar o diretório se é repositório ou nao
-        git_dir = subprocess.run(['git', 'rev-parse', '--show-toplevel'], stdout=subprocess.PIPE, text=True, check=True) #tenta pegar diretorio do repositorio git atual
+        git_dir = subprocess.run([f'git -C {os.path.abspath(file_path)}', 'rev-parse', '--show-toplevel'], stdout=subprocess.PIPE, text=True, check=True) #tenta pegar diretorio do repositorio git atual
         current_dir=git_dir.stdout.strip() #remove quebra de linha
         
     except:
@@ -51,13 +51,16 @@ def verificar_repositorio(file_path):
     print(f"📂 Diretório atual: {current_dir}")
 
     if not os.path.exists(os.path.join(current_dir, ".git")):
-        resposta = input("❓ Não é um repositório Git. Deseja iniciar um projeto Git aqui? (s/n): ").strip().lower()
-        if resposta == 's':
+        resposta = input("❓ Não é um repositório Git. Deseja iniciar um projeto Git aqui? ((s/y)/n): ").strip().lower()
+        if (resposta == 'y' or resposta == 's'):
             try:
                 nome_projeto = os.path.basename(current_dir)
-                subprocess.run(["git", "init"], check=True)
-                subprocess.run(["git", "config", "user.name", GIT_USER_NAME], check=True)
-                subprocess.run(["git", "config", "user.email", GIT_USER_EMAIL], check=True)
+
+                #inicializa repo no diretorio em que nao foi encontrado git
+                subprocess.run(['git', f"init {current_dir}"], check=True)
+                subprocess.run([f'git -C {current_dir}', "config", "user.name", GIT_USER_NAME], check=True)
+                subprocess.run([f'git -C {current_dir}', "config", "user.email", GIT_USER_EMAIL], check=True)
+                
                 print(f"✅ Repositório Git iniciado com o nome do projeto: {nome_projeto}")
                 return True
             except subprocess.CalledProcessError as e:
