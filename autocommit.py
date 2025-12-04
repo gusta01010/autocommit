@@ -142,7 +142,7 @@ def gerar_mensagem_commit(diff_text):
         'gemini-2.5-pro'  # Versão pro
     ]
 
-    prompt = setPrompt(diff_text)
+    prompt = get_prompt(diff_text)
     
     print("🔄 Tentando gerar mensagem com API do Gemini...")
     
