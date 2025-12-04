@@ -110,6 +110,8 @@ Agora você pode simplesmente digitar `autocommit` em qualquer diretório git pa
 
 ## 🤝 Contribuindo
 
+(sim, esse projeto aqui de fato vai analisar o seu código e te dar um retorno.)
+
 Contribuições são sempre bem-vindas! Sinta-se à vontade para:
 
 1. Fazer um Fork do projeto
