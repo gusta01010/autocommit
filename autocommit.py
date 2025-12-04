@@ -243,36 +243,41 @@ def main():
     try:
         print("🤖 AutoCommit iniciado...")
 
-        # Verifica as variáveis de ambiente
-        if not verificar_variaveis_ambiente():
-            return
+        file_path = args.arquivo
+             
+        for file in file_path:
+            print(os.path.abspath(file))
+            
+            # Verifica as variáveis de ambiente
+            if not verificar_variaveis_ambiente():
+                return
 
-        # Verifica o repositório Git
-        if not verificar_repositorio():
-            return
+            # Verifica o repositório Git
+            if not verificar_repositorio():
+                return
 
-        # Obtém alterações
-        alteracoes = obter_alteracoes()
-        if not alteracoes:
-            return
+            # Obtém alterações
+            alteracoes = obter_alteracoes()
+            if not alteracoes:
+                return
 
-        # Gera mensagem de commit
-        mensagem = gerar_mensagem_commit(alteracoes)
-        
-        # Mostra a mensagem que será usada
-        if mensagem == "Commit automático":
-            print(f"\n📝 Mensagem que será usada: '{mensagem}'")
-        else:
-            print(f"\n📝 Mensagem gerada: '{mensagem}'")
+            # Gera mensagem de commit
+            mensagem = gerar_mensagem_commit(alteracoes)
+            
+            # Mostra a mensagem que será usada
+            if mensagem == "Commit automático":
+                print(f"\n📝 Mensagem que será usada: '{mensagem}'")
+            else:
+                print(f"\n📝 Mensagem gerada: '{mensagem}'")
 
-        # Confirma com o usuário
-        confirmar = input("❓ Deseja usar esta mensagem para o commit? (s/n): ").strip().lower()
-        if confirmar != 's':
-            print("❌ Commit cancelado.")
-            return
+            # Confirma com o usuário
+            confirmar = input("❓ Deseja usar esta mensagem para o commit? (s/n): ").strip().lower()
+            if confirmar != 's':
+                print("❌ Commit cancelado.")
+                return
 
-        # Cria o commit
-        criar_commit(mensagem)
+            # Cria o commit
+            criar_commit(mensagem)
 
     except KeyboardInterrupt:
         print("\n❌ Operação cancelada pelo usuário.")
