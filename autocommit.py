@@ -255,13 +255,13 @@ def main():
         print("🤖 AutoCommit iniciado...")
 
         file_path = args.arquivo
-             
+        
+        # Verifica as variáveis de ambiente
+        if not verificar_variaveis_ambiente():
+            return
+
         for file in file_path:
             file = os.path.abspath(file)
-            
-            # Verifica as variáveis de ambiente
-            if not verificar_variaveis_ambiente():
-                return
 
             # Verifica o repositório Git
             if not verificar_repositorio(file):
