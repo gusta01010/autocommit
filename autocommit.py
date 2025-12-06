@@ -272,7 +272,7 @@ def main():
             if not alteracoes:
                 return
             
-            #print(alteracoes)
+            #print(alteracoes) mostra o diff
             
             # Gera mensagem de commit
             mensagem = gerar_mensagem_commit(alteracoes)
