@@ -80,7 +80,7 @@ def verificar_repositorio(file_path):
 def obter_alteracoes(file_path):
     """Obtém as alterações pendentes no Git"""
     try:
-        current_dir = current_dir = verif_dir(file_path)
+        current_dir = verif_dir(file_path)
 
         is_git_repo = os.path.exists(os.path.join(current_dir, ".git"))
         
