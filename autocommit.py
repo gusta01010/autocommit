@@ -64,9 +64,9 @@ def verificar_repositorio(file_path):
                 nome_projeto = os.path.basename(current_dir)
 
                 #inicializa repo no diretorio em que nao foi encontrado git
-                subprocess.run(['git', f"init {current_dir}"], check=True)
-                subprocess.run([f'git -C {current_dir}', "config", "user.name", GIT_USER_NAME], check=True)
-                subprocess.run([f'git -C {current_dir}', "config", "user.email", GIT_USER_EMAIL], check=True)
+                subprocess.run(['git', "init", f"{current_dir}"], check=True)
+                subprocess.run(['git', '-C', f'{current_dir}', "config", "user.name", GIT_USER_NAME], check=True)
+                subprocess.run(['git', '-C', f'{current_dir}', "config", "user.email", GIT_USER_EMAIL], check=True)
                 
                 print(f"✅ Repositório Git iniciado com o nome do projeto: {nome_projeto}")
                 return True
@@ -114,13 +114,13 @@ def obter_alteracoes(file_path):
         if "??" in status:
             # Adiciona arquivos não rastreados ao index temporariamente
             subprocess.run(["git", "-C" , f"{current_dir}" , "add", "-N", f"{file_path}"], check=True) #adiciona...
-            diff = subprocess.run(["git", "diff", f"{file_path}"],  #entao pega diferença
+            diff = subprocess.run(["git", "-C", f"{current_dir}", "diff", f"{file_path}"],  #entao pega diferença
                                 capture_output=True, encoding='utf-8', text=True).stdout.strip()
             # Reseta o index
-            subprocess.run(["git", "reset"], check=True)
+            subprocess.run(["git", "-C", f"{current_dir}", "reset"], check=True)
         else:
             # Caso contrário, usa diff normal
-            diff = subprocess.run(["git", "diff", f"{file_path}"],  #pega a diferença daquele arquivo
+            diff = subprocess.run(["git", "-C", f"{current_dir}", "diff", f"{file_path}"],  #pega a diferença daquele arquivo
                                 capture_output=True, encoding='utf-8', text=True).stdout.strip()
         
         if not diff:
@@ -241,8 +241,9 @@ def getIdioma(l = args.idioma):
 def criar_commit(mensagem, file_path):
     """Cria um novo commit com a mensagem fornecida"""
     try:
-        subprocess.run(["git", "add", f"{file_path}"], check=True)
-        subprocess.run(["git", "commit", "-m", mensagem], check=True)
+        current_dir = verif_dir(file_path)
+        subprocess.run(["git", "-C", f"{current_dir}", "add", f"{file_path}"], check=True)
+        subprocess.run(["git", "-C", f"{current_dir}", "commit", "-m", mensagem], check=True)
         print("✅ Commit realizado com sucesso!")
         return True
     except subprocess.CalledProcessError as e:
