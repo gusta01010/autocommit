@@ -64,7 +64,7 @@ def verificar_repositorio(file_path):
                 nome_projeto = os.path.basename(current_dir)
 
                 #inicializa repo no diretorio em que nao foi encontrado git
-                subprocess.run(['git', f"init {current_dir}"], check=True)
+                subprocess.run(['git', 'init', current_dir], check=True)
                 subprocess.run([f'git -C {current_dir}', "config", "user.name", GIT_USER_NAME], check=True)
                 subprocess.run([f'git -C {current_dir}', "config", "user.email", GIT_USER_EMAIL], check=True)
                 
