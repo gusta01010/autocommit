@@ -21,6 +21,15 @@ argumentos.add_argument("-i", "-l", "--idioma", "--language", type=str, help="Id
 argumentos.add_argument("arquivo", type=str, help="Arquivo a ser comitado", nargs="*", default=".") #nargs: 0 ou n arquivos
 args = argumentos.parse_args()
 
+def verif_dir():
+    try:
+        #refeito para deteectar o diretório se é repositório ou nao
+        git_dir = subprocess.run(['git', 'rev-parse', '--show-toplevel'], stdout=subprocess.PIPE, text=True, check=True) #tenta pegar diretorio do repositorio git atual
+        return git_dir.stdout.strip() #remove quebra de linha
+        
+    except:
+        return os.getcwd() #se nao achar pega o normal
+
 def verificar_variaveis_ambiente():
     """Verifica se todas as variáveis de ambiente necessárias estão configuradas"""
     variaveis = {
@@ -38,15 +47,10 @@ def verificar_variaveis_ambiente():
         return False
     return True
 
-def verificar_repositorio(file_path):
-    """Verifica se o diretório é um repositório Git"""
-    try:
-        #refeito para deteectar o diretório se é repositório ou nao
-        git_dir = subprocess.run([f'git -C {os.path.abspath(file_path)}', 'rev-parse', '--show-toplevel'], stdout=subprocess.PIPE, text=True, check=True) #tenta pegar diretorio do repositorio git atual
-        current_dir=git_dir.stdout.strip() #remove quebra de linha
-        
-    except:
-        current_dir = os.getcwd() #se nao achar pega o normal
+def verificar_repositorio():
+    """Verifica se o diretório atual é um repositório Git"""
+
+    current_dir = verif_dir()
 
     print(f"📂 Diretório atual: {current_dir}")
 
@@ -73,7 +77,7 @@ def verificar_repositorio(file_path):
 def obter_alteracoes():
     """Obtém as alterações pendentes no Git"""
     try:
-        current_dir = os.getcwd()
+        current_dir = current_dir = verif_dir()
         is_git_repo = os.path.exists(os.path.join(current_dir, ".git"))
         
         # Se não for um repositório git, mostra todo o conteúdo como novo
