@@ -23,6 +23,8 @@ args = argumentos.parse_args()
 
 def verif_dir(file_path):
     try:
+        if os.path.isfile(file_path):
+            file_path = os.path.dirname(os.path.abspath(file_path))
         #refeito para deteectar o diretório se é repositório ou nao
         git_dir = subprocess.run(['git', '-C', f'{file_path}', 'rev-parse', '--show-toplevel'], stdout=subprocess.PIPE, text=True, check=True) #tenta pegar diretorio do repositorio git atual
         return git_dir.stdout.strip() #remove quebra de linha
@@ -84,20 +86,20 @@ def obter_alteracoes(file_path):
         # Se não for um repositório git, mostra todo o conteúdo como novo
         if not is_git_repo:
             status = "\n".join(f"?? {f}" for f in os.listdir(current_dir) 
-                             if not f.startswith('.') and not f.startswith('__'))
+                             if not f.startswith('.') and not f.startswith('__')) #filtro
             if not status:
                 print("ℹ️ Nenhum arquivo encontrado para commit.")
                 return None
                 
             print("📝 Arquivos detectados:")
-            print(status)
+            print(os.path.basename(file_path))
             
             # Usa diff --no-index para mostrar todo o conteúdo como novo
-            diff = subprocess.run(["git", "diff", "--no-index", "/dev/null", "."],
+            diff = subprocess.run(["git", "diff", "--no-index", "/dev/null", f"{current_dir}"], # compara com diretorio do arq
                                 stdout=subprocess.PIPE, encoding='utf-8', text=True, stderr=subprocess.DEVNULL).stdout.strip()
         
         # Se for um repositório git, verifica alterações
-        status = subprocess.run(["git", "status", "--porcelain"], 
+        status = subprocess.run(["git", '-C', f'{current_dir}', "status", "--porcelain"], 
                               capture_output=True, encoding='utf-8', text=True).stdout.strip()
         
         if not status:
@@ -110,7 +112,7 @@ def obter_alteracoes(file_path):
         # Se houver arquivos não rastreados (??) no status
         if "??" in status:
             # Adiciona arquivos não rastreados ao index temporariamente
-            subprocess.run(["git", "add", "-N", "."], check=True)
+            subprocess.run(["git", "add", "-N", f"{file_path}"], check=True)
             diff = subprocess.run(["git", "diff"], 
                                 capture_output=True, encoding='utf-8', text=True).stdout.strip()
             # Reseta o index
