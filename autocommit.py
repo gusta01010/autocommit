@@ -24,8 +24,9 @@ args = argumentos.parse_args()
 def verif_dir(file_path):
     try:
         if os.path.isfile(file_path):
+            #se for arquivo, força a pegar seu diretorio
             file_path = os.path.dirname(os.path.abspath(file_path))
-        #refeito para deteectar o diretório se é repositório ou nao
+        #deteectar o file_path, sendo diretorio, se é repositório ou nao
         git_dir = subprocess.run(['git', '-C', f'{file_path}', 'rev-parse', '--show-toplevel'], stdout=subprocess.PIPE, text=True, check=True) #tenta pegar diretorio do repositorio git atual
         return git_dir.stdout.strip() #remove quebra de linha
         
