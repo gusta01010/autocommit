@@ -113,7 +113,7 @@ def obter_alteracoes(file_path):
         # Se houver arquivos não rastreados (??) no status
         if "??" in status:
             # Adiciona arquivos não rastreados ao index temporariamente
-            subprocess.run(["git", "-C" , f"{file_path}" , "add", "-N", f"{file_path}"], check=True) #adiciona...
+            subprocess.run(["git", "-C" , f"{current_dir}" , "add", "-N", f"{file_path}"], check=True) #adiciona...
             diff = subprocess.run(["git", "diff", f"{file_path}"],  #entao pega diferença
                                 capture_output=True, encoding='utf-8', text=True).stdout.strip()
             # Reseta o index
