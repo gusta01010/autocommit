@@ -120,7 +120,7 @@ def obter_alteracoes(file_path):
             subprocess.run(["git", "-C", f"{current_dir}", "reset"], check=True)
         else:
             # Caso contrário, usa diff normal
-            diff = subprocess.run(["git", "diff", f"{file_path}"],  #pega a diferença daquele arquivo
+            diff = subprocess.run(["git", "-C", f"{current_dir}", "diff", f"{file_path}"],  #pega a diferença daquele arquivo
                                 capture_output=True, encoding='utf-8', text=True).stdout.strip()
         
         if not diff:
