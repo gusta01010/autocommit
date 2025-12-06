@@ -113,14 +113,14 @@ def obter_alteracoes(file_path):
         # Se houver arquivos não rastreados (??) no status
         if "??" in status:
             # Adiciona arquivos não rastreados ao index temporariamente
-            subprocess.run(["git", "add", "-N", f"{file_path}"], check=True)
-            diff = subprocess.run(["git", "diff"], 
+            subprocess.run(["git", "-C" , f"{file_path}" , "add", "-N", f"{file_path}"], check=True) #adiciona...
+            diff = subprocess.run(["git", "diff", f"{file_path}"],  #entao pega diferença
                                 capture_output=True, encoding='utf-8', text=True).stdout.strip()
             # Reseta o index
             subprocess.run(["git", "reset"], check=True)
         else:
             # Caso contrário, usa diff normal
-            diff = subprocess.run(["git", "diff", f"{file_path}"], 
+            diff = subprocess.run(["git", "diff", f"{file_path}"],  #pega a diferença daquele arquivo
                                 capture_output=True, encoding='utf-8', text=True).stdout.strip()
         
         if not diff:
@@ -271,7 +271,9 @@ def main():
             alteracoes = obter_alteracoes(file)
             if not alteracoes:
                 return
-            print(alteracoes)
+            
+            #print(alteracoes)
+            
             # Gera mensagem de commit
             mensagem = gerar_mensagem_commit(alteracoes)
             
