@@ -287,7 +287,7 @@ def main():
             confirmar = input("❓ Deseja usar esta mensagem para o commit? (s/n): ").strip().lower()
             if confirmar != 's':
                 print("❌ Commit cancelado.")
-                return
+                continue
 
             # Cria o commit
             criar_commit(mensagem, file)
