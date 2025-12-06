@@ -241,7 +241,8 @@ def getIdioma(l = args.idioma):
 def criar_commit(mensagem, file_path):
     """Cria um novo commit com a mensagem fornecida"""
     try:
-        subprocess.run(["git", "add", f"{file_path}"], check=True)
+        current_dir = verif_dir(file_path)
+        subprocess.run(["git", "-C", current_dir, "add", f"{file_path}"], check=True)
         subprocess.run(["git", "commit", "-m", mensagem], check=True)
         print("✅ Commit realizado com sucesso!")
         return True
