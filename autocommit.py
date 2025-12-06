@@ -92,7 +92,7 @@ def obter_alteracoes(file_path):
                 print("ℹ️ Nenhum arquivo encontrado para commit.")
                 return None
                 
-            print("📝 Arquivos detectados:")
+            print("📝 Arquivos NOVOS detectados:")
             print(os.path.basename(file_path))
             
             # Usa diff --no-index para mostrar todo o conteúdo como novo
@@ -100,7 +100,7 @@ def obter_alteracoes(file_path):
                                 stdout=subprocess.PIPE, encoding='utf-8', text=True, stderr=subprocess.DEVNULL).stdout.strip()
         
         # Se for um repositório git, verifica alterações
-        status = subprocess.run(["git", '-C', f'{current_dir}', "status", "--porcelain"], 
+        status = subprocess.run(["git", '-C', f'{current_dir}', "status", "--porcelain", f"{file_path}"], 
                               capture_output=True, encoding='utf-8', text=True).stdout.strip()
         
         if not status:
@@ -120,7 +120,7 @@ def obter_alteracoes(file_path):
             subprocess.run(["git", "reset"], check=True)
         else:
             # Caso contrário, usa diff normal
-            diff = subprocess.run(["git", "diff"], 
+            diff = subprocess.run(["git", "diff", f"{file_path}"], 
                                 capture_output=True, encoding='utf-8', text=True).stdout.strip()
         
         if not diff:
@@ -238,10 +238,10 @@ def getIdioma(l = args.idioma):
         raise ValueError(f"{sys.argv[(len(sys.argv)-2)]}: Valor de idioma não pode ser vazio!")
     return l
 
-def criar_commit(mensagem):
+def criar_commit(mensagem, file_path):
     """Cria um novo commit com a mensagem fornecida"""
     try:
-        subprocess.run(["git", "add", "--all"], check=True)
+        subprocess.run(["git", "add", f"{file_path}"], check=True)
         subprocess.run(["git", "commit", "-m", mensagem], check=True)
         print("✅ Commit realizado com sucesso!")
         return True
@@ -257,7 +257,7 @@ def main():
         file_path = args.arquivo
              
         for file in file_path:
-            print(os.path.abspath(file))
+            file = os.path.abspath(file)
             
             # Verifica as variáveis de ambiente
             if not verificar_variaveis_ambiente():
@@ -271,7 +271,7 @@ def main():
             alteracoes = obter_alteracoes(file)
             if not alteracoes:
                 return
-
+            print(alteracoes)
             # Gera mensagem de commit
             mensagem = gerar_mensagem_commit(alteracoes)
             
@@ -288,7 +288,7 @@ def main():
                 return
 
             # Cria o commit
-            criar_commit(mensagem)
+            criar_commit(mensagem, file)
 
     except KeyboardInterrupt:
         print("\n❌ Operação cancelada pelo usuário.")
