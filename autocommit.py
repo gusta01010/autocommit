@@ -6,7 +6,7 @@ import requests
 from dotenv import load_dotenv
 import json
 
-
+#teste
 # Carrega as variáveis de ambiente do arquivo .env
 load_dotenv()
 
@@ -18,12 +18,16 @@ GIT_USER_EMAIL = os.getenv('GIT_USER_EMAIL')
 # Configura o recebimento de argumentos
 argumentos = argparse.ArgumentParser(description ='Recebe idioma')
 argumentos.add_argument("-i", "-l", "--idioma", "--language", type=str, help="Idioma a ser traduzido", default="Português")
+argumentos.add_argument("arquivo", type=str, help="Arquivo a ser comitado", nargs="*", default=".") #nargs: 0 ou n arquivos
 args = argumentos.parse_args()
 
-def verif_dir():
+def verif_dir(file_path):
     try:
-        #refeito para deteectar o diretório se é repositório ou nao
-        git_dir = subprocess.run(['git', 'rev-parse', '--show-toplevel'], stdout=subprocess.PIPE, text=True, check=True) #tenta pegar diretorio do repositorio git atual
+        if os.path.isfile(file_path):
+            #se for arquivo, força a pegar seu diretorio
+            file_path = os.path.dirname(os.path.abspath(file_path))
+        #deteectar o file_path, sendo diretorio, se é repositório ou nao
+        git_dir = subprocess.run(['git', '-C', f'{file_path}', 'rev-parse', '--show-toplevel'], stdout=subprocess.PIPE, text=True, check=True) #tenta pegar diretorio do repositorio git atual
         return git_dir.stdout.strip() #remove quebra de linha
         
     except:
@@ -46,21 +50,24 @@ def verificar_variaveis_ambiente():
         return False
     return True
 
-def verificar_repositorio():
+def verificar_repositorio(file_path):
     """Verifica se o diretório atual é um repositório Git"""
 
-    current_dir = verif_dir()
+    current_dir = verif_dir(file_path)
 
     print(f"📂 Diretório atual: {current_dir}")
 
     if not os.path.exists(os.path.join(current_dir, ".git")):
-        resposta = input("❓ Não é um repositório Git. Deseja iniciar um projeto Git aqui? (s/n): ").strip().lower()
-        if resposta == 's':
+        resposta = input("❓ Não é um repositório Git. Deseja iniciar um projeto Git aqui? ((s/y)/n): ").strip().lower()
+        if (resposta == 'y' or resposta == 's'):
             try:
                 nome_projeto = os.path.basename(current_dir)
-                subprocess.run(["git", "init"], check=True)
-                subprocess.run(["git", "config", "user.name", GIT_USER_NAME], check=True)
-                subprocess.run(["git", "config", "user.email", GIT_USER_EMAIL], check=True)
+
+                #inicializa repo no diretorio em que nao foi encontrado git
+                subprocess.run(['git', 'init', current_dir], check=True)
+                subprocess.run([f'git -C {current_dir}', "config", "user.name", GIT_USER_NAME], check=True)
+                subprocess.run([f'git -C {current_dir}', "config", "user.email", GIT_USER_EMAIL], check=True)
+                
                 print(f"✅ Repositório Git iniciado com o nome do projeto: {nome_projeto}")
                 return True
             except subprocess.CalledProcessError as e:
@@ -70,29 +77,30 @@ def verificar_repositorio():
         return False
     return True
 
-def obter_alteracoes():
+def obter_alteracoes(file_path):
     """Obtém as alterações pendentes no Git"""
     try:
-        current_dir = current_dir = verif_dir()
+        current_dir = current_dir = verif_dir(file_path)
+
         is_git_repo = os.path.exists(os.path.join(current_dir, ".git"))
         
         # Se não for um repositório git, mostra todo o conteúdo como novo
         if not is_git_repo:
             status = "\n".join(f"?? {f}" for f in os.listdir(current_dir) 
-                             if not f.startswith('.') and not f.startswith('__'))
+                             if not f.startswith('.') and not f.startswith('__')) #filtro
             if not status:
                 print("ℹ️ Nenhum arquivo encontrado para commit.")
                 return None
                 
-            print("📝 Arquivos detectados:")
-            print(status)
+            print("📝 Arquivos NOVOS detectados:")
+            print(os.path.basename(file_path))
             
             # Usa diff --no-index para mostrar todo o conteúdo como novo
-            diff = subprocess.run(["git", "diff", "--no-index", "/dev/null", "."],
+            diff = subprocess.run(["git", "diff", "--no-index", "/dev/null", f"{current_dir}"], # compara com diretorio do arq
                                 stdout=subprocess.PIPE, encoding='utf-8', text=True, stderr=subprocess.DEVNULL).stdout.strip()
         
         # Se for um repositório git, verifica alterações
-        status = subprocess.run(["git", "status", "--porcelain"], 
+        status = subprocess.run(["git", '-C', f'{current_dir}', "status", "--porcelain", f"{file_path}"], 
                               capture_output=True, encoding='utf-8', text=True).stdout.strip()
         
         if not status:
@@ -105,14 +113,14 @@ def obter_alteracoes():
         # Se houver arquivos não rastreados (??) no status
         if "??" in status:
             # Adiciona arquivos não rastreados ao index temporariamente
-            subprocess.run(["git", "add", "-N", "."], check=True)
-            diff = subprocess.run(["git", "diff"], 
+            subprocess.run(["git", "-C" , f"{current_dir}" , "add", "-N", f"{file_path}"], check=True) #adiciona...
+            diff = subprocess.run(["git", "diff", f"{file_path}"],  #entao pega diferença
                                 capture_output=True, encoding='utf-8', text=True).stdout.strip()
             # Reseta o index
-            subprocess.run(["git", "reset"], check=True)
+            subprocess.run(["git", "-C", f"{current_dir}", "reset"], check=True)
         else:
             # Caso contrário, usa diff normal
-            diff = subprocess.run(["git", "diff"], 
+            diff = subprocess.run(["git", "-C", f"{current_dir}", "diff", f"{file_path}"],  #pega a diferença daquele arquivo
                                 capture_output=True, encoding='utf-8', text=True).stdout.strip()
         
         if not diff:
@@ -230,10 +238,10 @@ def getIdioma(l = args.idioma):
         raise ValueError(f"{sys.argv[(len(sys.argv)-2)]}: Valor de idioma não pode ser vazio!")
     return l
 
-def criar_commit(mensagem):
+def criar_commit(mensagem, file_path):
     """Cria um novo commit com a mensagem fornecida"""
     try:
-        subprocess.run(["git", "add", "--all"], check=True)
+        subprocess.run(["git", "add", f"{file_path}"], check=True)
         subprocess.run(["git", "commit", "-m", mensagem], check=True)
         print("✅ Commit realizado com sucesso!")
         return True
@@ -246,36 +254,43 @@ def main():
     try:
         print("🤖 AutoCommit iniciado...")
 
+        file_path = args.arquivo
+        
         # Verifica as variáveis de ambiente
         if not verificar_variaveis_ambiente():
             return
 
-        # Verifica o repositório Git
-        if not verificar_repositorio():
-            return
+        for file in file_path:
+            file = os.path.abspath(file)
 
-        # Obtém alterações
-        alteracoes = obter_alteracoes()
-        if not alteracoes:
-            return
+            # Verifica o repositório Git
+            if not verificar_repositorio(file):
+                return
 
-        # Gera mensagem de commit
-        mensagem = gerar_mensagem_commit(alteracoes)
-        
-        # Mostra a mensagem que será usada
-        if mensagem == "Commit automático":
-            print(f"\n📝 Mensagem que será usada: '{mensagem}'")
-        else:
-            print(f"\n📝 Mensagem gerada: '{mensagem}'")
+            # Obtém alterações
+            alteracoes = obter_alteracoes(file)
+            if not alteracoes:
+                return
+            
+            #print(alteracoes) mostra o diff
+            
+            # Gera mensagem de commit
+            mensagem = gerar_mensagem_commit(alteracoes)
+            
+            # Mostra a mensagem que será usada
+            if mensagem == "Commit automático":
+                print(f"\n📝 Mensagem que será usada: '{mensagem}'")
+            else:
+                print(f"\n📝 Mensagem gerada: '{mensagem}'")
 
-        # Confirma com o usuário
-        confirmar = input("❓ Deseja usar esta mensagem para o commit? (s/n): ").strip().lower()
-        if confirmar != 's':
-            print("❌ Commit cancelado.")
-            return
+            # Confirma com o usuário
+            confirmar = input("❓ Deseja usar esta mensagem para o commit? (s/n): ").strip().lower()
+            if confirmar != 's':
+                print("❌ Commit cancelado.")
+                continue
 
-        # Cria o commit
-        criar_commit(mensagem)
+            # Cria o commit
+            criar_commit(mensagem, file)
 
     except KeyboardInterrupt:
         print("\n❌ Operação cancelada pelo usuário.")
