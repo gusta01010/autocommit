@@ -196,7 +196,7 @@ def gerar_mensagem_commit(diff_text):
             
             # Se receber 429, tenta o proximo
             if response.status_code == 429:
-                print(f"⚠️  Limite de requisições atingido (429) para {modelo}.")
+                print(f"⚠️  Limite de requisições atingido (429) para {modelo}. Tentando próximo...")
                 continue
             
             response.raise_for_status()
