@@ -252,7 +252,7 @@ def criar_commit(mensagem, file_path):
 def main():
     """Função principal do programa"""
     try:
-        print("🤖 AutoCommit iniciado...")
+        print("🤖 AutoCommit iniciado.")
 
         file_path = args.arquivo
         
