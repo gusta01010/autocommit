@@ -156,12 +156,14 @@ def gerar_mensagem_commit(diff_text):
 
     prompt = get_prompt(diff_text)
     
-    print("🔄 Tentando gerar mensagem com API do Gemini...")
     
     # Limpa a API_KEY para garantir que não tenha caracteres extras
     api_key_limpa = API_KEY.strip().lstrip('=').rstrip('=')
     
     for modelo in modelos:
+        
+        print(f"🔄 Tentando gerar mensagem com {modelo}...")
+
         try:
             # URL sem query parameter - a key vai no header
             url = f"https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent"
@@ -207,10 +209,7 @@ def gerar_mensagem_commit(diff_text):
                        .get("text", "").strip())
             
             if mensagem:
-                print(f"✅ Sucesso com modelo: {modelo}")
-                print("\n--- Descritivo Gerado ---")
-                print(mensagem)
-                print("-------------------------\n")
+
                 return mensagem
                 
         except requests.exceptions.HTTPError as e:
@@ -253,7 +252,7 @@ def criar_commit(mensagem, file_path):
 def main():
     """Função principal do programa"""
     try:
-        print("🤖 AutoCommit iniciado...")
+        print("🤖 AutoCommit iniciado.")
 
         file_path = args.arquivo
         
