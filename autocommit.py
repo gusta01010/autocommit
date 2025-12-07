@@ -266,12 +266,12 @@ def main():
 
             # Verifica o repositório Git
             if not verificar_repositorio(file):
-                return
+                continue
 
             # Obtém alterações
             alteracoes = obter_alteracoes(file)
             if not alteracoes:
-                return
+                continue
             
             #print(alteracoes) mostra o diff
             
