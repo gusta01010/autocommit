@@ -64,9 +64,9 @@ def verificar_repositorio(file_path):
                 nome_projeto = os.path.basename(current_dir)
 
                 #inicializa repo no diretorio em que nao foi encontrado git
-                subprocess.run(['git', 'init', current_dir], check=True)
-                subprocess.run([f'git -C {current_dir}', "config", "user.name", GIT_USER_NAME], check=True)
-                subprocess.run([f'git -C {current_dir}', "config", "user.email", GIT_USER_EMAIL], check=True)
+                subprocess.run(['git', '-C', f'{current_dir}', "init"], check=True)
+                subprocess.run(['git', '-C', f'{current_dir}', "config", "user.name", GIT_USER_NAME], check=True)
+                subprocess.run(['git', '-C', f'{current_dir}', "config", "user.email", GIT_USER_EMAIL], check=True)
                 
                 print(f"✅ Repositório Git iniciado com o nome do projeto: {nome_projeto}")
                 return True
@@ -80,7 +80,7 @@ def verificar_repositorio(file_path):
 def obter_alteracoes(file_path):
     """Obtém as alterações pendentes no Git"""
     try:
-        current_dir = current_dir = verif_dir(file_path)
+        current_dir = verif_dir(file_path)
 
         is_git_repo = os.path.exists(os.path.join(current_dir, ".git"))
         
@@ -113,8 +113,8 @@ def obter_alteracoes(file_path):
         # Se houver arquivos não rastreados (??) no status
         if "??" in status:
             # Adiciona arquivos não rastreados ao index temporariamente
-            subprocess.run(["git", "-C" , f"{current_dir}" , "add", "-N", f"{file_path}"], check=True) #adiciona...
-            diff = subprocess.run(["git", "diff", f"{file_path}"],  #entao pega diferença
+            subprocess.run(["git", "-C", f"{current_dir}", "add", "-N", f"{file_path}"], check=True) #adiciona...
+            diff = subprocess.run(["git", "-C", f"{current_dir}", "diff", f"{file_path}"],  #entao pega diferença
                                 capture_output=True, encoding='utf-8', text=True).stdout.strip()
             # Reseta o index
             subprocess.run(["git", "-C", f"{current_dir}", "reset"], check=True)
