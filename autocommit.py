@@ -194,10 +194,10 @@ def gerar_mensagem_commit(diff_text):
                 print(f"⚠️  Modelo {modelo} não disponível (erro {response.status_code}). Tentando próximo...")
                 continue
             
-            # Se receber 429, para de tentar
+            # Se receber 429, tenta o proximo
             if response.status_code == 429:
                 print(f"⚠️  Limite de requisições atingido (429) para {modelo}.")
-                break
+                continue
             
             response.raise_for_status()
             
@@ -286,7 +286,7 @@ def main():
            
             #fluxo de erro
             if mensagem == 1: #código erro 1
-                continue
+                pass #pula os if
             
             #fluxo normal
             else:
@@ -299,7 +299,6 @@ def main():
 
                 else:    # Cria o commit
                     print("❌ Commit cancelado.")
-                    continue 
 
     except KeyboardInterrupt:
         print("\n❌ Operação cancelada pelo usuário.")
