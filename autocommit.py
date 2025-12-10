@@ -58,7 +58,7 @@ def verificar_repositorio(file_path):
     print(f"📂 Diretório atual: {current_dir}")
 
     if not os.path.exists(os.path.join(current_dir, ".git")):
-        resposta = input("❓ Não é um repositório Git. Deseja iniciar um projeto Git aqui? ((s/y)/n): ").strip().lower()
+        resposta = input("❓ Não é um repositório Git. Deseja iniciar um projeto Git aqui? ((y/s)/n): ").strip().lower()
         if (resposta == 'y' or resposta == 's'):
             try:
                 nome_projeto = os.path.basename(current_dir)
@@ -194,10 +194,10 @@ def gerar_mensagem_commit(diff_text):
                 print(f"⚠️  Modelo {modelo} não disponível (erro {response.status_code}). Tentando próximo...")
                 continue
             
-            # Se receber 429, para de tentar
+            # Se receber 429, tenta o proximo
             if response.status_code == 429:
-                print(f"⚠️  Limite de requisições atingido (429) para {modelo}.")
-                break
+                print(f"⚠️  Limite de requisições atingido (429) para {modelo}. Tentando próximo...")
+                continue
             
             response.raise_for_status()
             
@@ -228,8 +228,13 @@ def gerar_mensagem_commit(diff_text):
             continue
     
     print("\n❌ Não foi possível gerar mensagem com nenhum modelo do Gemini.")
-    print("💡 Usando mensagem padrão: 'Commit automático'")
-    return "Commit automático"
+    #pergunta ao usuario se gostaria de abrir a pagina do projeto
+    print("Gostaria de abrir a página do projeto para criar uma issue? ((y/s)/n): ")
+    resposta = input()
+    if (resposta == 's' or resposta == 'y'):
+        return os.system("start \"\" https://github.com/gusta01010/autocommit/issues") #abre a url
+    
+    return 1 #retorna código erro 1
 
 # retorna Português se não especificar, caso contrário retorna valor que usuário especificou
 def getIdioma(l = args.idioma):
@@ -278,19 +283,22 @@ def main():
             mensagem = gerar_mensagem_commit(alteracoes)
             
             # Mostra a mensagem que será usada
-            if mensagem == "Commit automático":
-                print(f"\n📝 Mensagem que será usada: '{mensagem}'")
+           
+            #fluxo de erro
+            if mensagem == 1: #código erro 1
+                pass #pula os if
+            
+            #fluxo normal
             else:
                 print(f"\n📝 Mensagem gerada: '{mensagem}'")
 
-            # Confirma com o usuário
-            confirmar = input("❓ Deseja usar esta mensagem para o commit? (s/n): ").strip().lower()
-            if confirmar != 's':
-                print("❌ Commit cancelado.")
-                continue
+                # Confirma com o usuário
+                confirmar = input("❓ Deseja usar esta mensagem para o commit? ((y/s)/n): ").strip().lower()
+                if (confirmar == 's' or confirmar == 'y'):
+                    criar_commit(mensagem, file)
 
-            # Cria o commit
-            criar_commit(mensagem, file)
+                else:    # Cria o commit
+                    print("❌ Commit cancelado.")
 
     except KeyboardInterrupt:
         print("\n❌ Operação cancelada pelo usuário.")
