@@ -6,7 +6,7 @@ import requests
 from dotenv import load_dotenv
 import json
 
-#teste
+
 # Carrega as variáveis de ambiente do arquivo .env
 load_dotenv()
 
@@ -20,6 +20,9 @@ argumentos = argparse.ArgumentParser(description ='Recebe idioma')
 argumentos.add_argument("-i", "-l", "--idioma", "--language", type=str, help="Idioma a ser traduzido", default="Português")
 argumentos.add_argument("arquivo", type=str, help="Arquivo a ser comitado", nargs="*", default=".") #nargs: 0 ou n arquivos
 args = argumentos.parse_args()
+
+# Configura os inputs aceitos positivamente
+aceitar = ['y', 'Y', 's', 'S']
 
 def verif_dir(file_path):
     try:
@@ -59,7 +62,7 @@ def verificar_repositorio(file_path):
 
     if not os.path.exists(os.path.join(current_dir, ".git")):
         resposta = input("❓ Não é um repositório Git. Deseja iniciar um projeto Git aqui? ((y/s)/n): ").strip().lower()
-        if (resposta == 'y' or resposta == 's'):
+        if (resposta in aceitar):
             try:
                 nome_projeto = os.path.basename(current_dir)
 
@@ -231,7 +234,7 @@ def gerar_mensagem_commit(diff_text):
     #pergunta ao usuario se gostaria de abrir a pagina do projeto
     print("Gostaria de abrir a página do projeto para criar uma issue? ((y/s)/n): ")
     resposta = input()
-    if (resposta == 's' or resposta == 'y'):
+    if (resposta in aceitar):
         return os.system("start \"\" https://github.com/gusta01010/autocommit/issues") #abre a url
     
     return 1 #retorna código erro 1
@@ -293,8 +296,8 @@ def main():
                 print(f"\n📝 Mensagem gerada: '{mensagem}'")
 
                 # Confirma com o usuário
-                confirmar = input("❓ Deseja usar esta mensagem para o commit? ((y/s)/n): ").strip().lower()
-                if (confirmar == 's' or confirmar == 'y'):
+                resposta = input("❓ Deseja usar esta mensagem para o commit? ((y/s)/n): ").strip().lower()
+                if (resposta in aceitar):
                     criar_commit(mensagem, file)
 
                 else:    # Cria o commit
