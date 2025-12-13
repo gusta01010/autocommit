@@ -72,8 +72,9 @@ python autocommit.py
 
 ### Dica de Produtividade 🚀
 
-Para tornar o uso ainda mais prático, você pode criar um alias no seu sistema. Adicione a seguinte linha ao seu arquivo `~/.bashrc` ou `~/.zshrc`:
+Para tornar o uso ainda mais prático, você pode criar um alias no seu sistema.
 
+## Terminal Linux: Adicione a seguinte linha ao seu arquivo `~/.bashrc` ou `~/.zshrc`:
 ```bash
 alias autocommit="python /caminho/para/seu/autocommit.py"
 ```
@@ -87,8 +88,23 @@ Após adicionar o alias, recarregue seu arquivo de configuração:
 ```bash
 source ~/.bashrc  # ou source ~/.zshrc
 ```
+## Visual Studio Code: Adicione uma função no perfil do PowerShell
+*\*Testado no Windows 11*
 
-Agora você pode simplesmente digitar `autocommit` em qualquer diretório git para usar a ferramenta!
+Alias no VScode:
+```terminal
+code $PROFILE
+```
+
+Isso fará o VScode abrir o seu arquivo de perfil, onde você poderá inserir um alias para executar o programa:
+```
+function autocommit {
+    python "[CAMINHO ABSOLUTO DO PROGRAMA]\autocommit.py" @args
+}
+```
+
+
+Agora você pode simplesmente digitar `autocommit` em qualquer diretório para usar a ferramenta!
 
 ## 🌟 Vantagens de Uso
 
