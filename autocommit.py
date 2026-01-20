@@ -4,6 +4,7 @@ import argparse
 import subprocess
 import requests
 from dotenv import load_dotenv
+from editor import start_editor
 import json
 
 
@@ -22,7 +23,7 @@ argumentos.add_argument("arquivo", type=str, help="Arquivo a ser comitado", narg
 args = argumentos.parse_args()
 
 # Configura os inputs aceitos positivamente
-aceitar = ['y', 'Y', 's', 'S']
+aceitar = ['y', 'Y', 's', 'S', '1']
 
 def verif_dir(file_path):
     try:
@@ -296,8 +297,11 @@ def main():
                 print(f"\n📝 Mensagem gerada: '{mensagem}'")
 
                 # Confirma com o usuário
-                resposta = input("❓ Deseja usar esta mensagem para o commit? ((y/s)/n): ").strip().lower()
+                resposta = input("Opções: 1. Aplicar 2. Editar: ").strip().lower()
                 if (resposta in aceitar):
+                    criar_commit(mensagem, file)
+                elif (resposta == '2'):
+                    mensagem = start_editor(mensagem)
                     criar_commit(mensagem, file)
 
                 else:    # Cria o commit
