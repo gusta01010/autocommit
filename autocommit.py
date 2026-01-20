@@ -298,23 +298,15 @@ def main():
                 print(f"\n📝 Mensagem gerada: '{mensagem}'")
 
                 # Confirma com o usuário
-                sucesso = False
+                resposta = input("\nOpções:        1. Aplicar        2. Editar: ").strip().lower()
+                if (resposta in aceitar):
+                    criar_commit(mensagem, file)
+                elif (resposta == '2'):
+                    mensagem = start_editor(mensagem)
+                    criar_commit(mensagem, file)
 
-                while not sucesso:
-                    try:
-                        resposta = input("\nOpções:        1. Aplicar        2. Editar: ").strip().lower()
-                        if (resposta in aceitar):
-                            criar_commit(mensagem, file)
-                            sucesso = True
-                        elif (resposta == '2'):
-                            mensagem = start_editor(mensagem)
-                            criar_commit(mensagem, file)
-                            sucesso = True
-
-                        else:    # Cria o commit
-                            print("❌ Commit cancelado.")
-                    except subprocess.CalledProcessError as e:
-                        print("Erro inesperado: Verifique se a mensagem não está vazia!")
+                else:    # Cria o commit
+                    print("❌ Commit cancelado.")
 
 
     except KeyboardInterrupt:
