@@ -2,7 +2,7 @@ import os
 import subprocess
 import sys
 
-filename = os.path.abspath("message.txt")
+filename = os.path.abspath("./message.txt")
 
 def start_editor(message):
     create(message)
@@ -12,17 +12,17 @@ def start_editor(message):
         return edit_linux(message)
 
 def save():
+    #ler e retornar o valor
     file = open(filename, "r")
     content = file.read()
     file.close()
     return content
 
 def create(message):
-    #escrever o conteudo gerado em um arquivo novo e salvar
+    #escrever o conteudo gerado em um arquivo novo e salvar para o editor ler (edit, vim...)
     file = open(filename, "w")
     file.write(message)
     file.close()
-
 
 def edit_windows(message):
     subprocess.run(f"edit {filename}")
@@ -33,5 +33,5 @@ def edit_linux(message):
     return save()
 
 if __name__ == "__main__":
-    aa = start_editor("xablau")
+    aa = start_editor("test")
     print(aa)
