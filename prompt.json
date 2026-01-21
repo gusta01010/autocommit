@@ -1,3 +1,3 @@
 {
-    "prompt": "Faça em {getIdioma}, gere uma mensagem de commit de forma simples e resumida das alterações\ncom base nas seguintes diferenças entre os arquivos.\nSua primeira linha na resposta deve ser o título, com um label como chore: fix: feat:... utilizado pelo GitHub e então abaixo mostrará as alterações realizadas, em markdown, comente apenas o que for fato com base nó código. Alterações: \n{diff_text}"
+    "prompt": "Faça em {getIdioma}, gere uma mensagem de commit de forma simples e resumida das alterações\ncom base nas seguintes diferenças entre os arquivos.\nSua primeira linha na resposta deve ser o título, com um label como 'chore:' 'fix:' 'feat: ...' utilizado pelo GitHub e então o conteúdo abaixo da primeira linha mostrará as alterações realizadas, comente apenas o que for fato com base nó código.\nAlterações: \n\n{diff_text}"
 }
