@@ -298,7 +298,7 @@ def main():
                 print(f"\n📝 Mensagem gerada: '{mensagem}'")
 
                 # Confirma com o usuário
-                resposta = input("\nOpções:        1. Aplicar        2. Editar: ").strip().lower()
+                resposta = input("\nOpções:  1. Aplicar     |   2. Editar   |   3. Cancelar: ").strip().lower()
                 if (resposta in aceitar):
                     criar_commit(mensagem, file)
                 elif (resposta == '2'):

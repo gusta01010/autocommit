@@ -2,6 +2,8 @@ import os
 import subprocess
 import sys
 
+#Recebe string e edita, retornando o valor modificado
+
 filename = os.path.abspath("./message.txt")
 
 def start_editor(message):
